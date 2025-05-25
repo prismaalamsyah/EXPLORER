@@ -1,7 +1,3 @@
-Berikut adalah versi **Markdown** dari dokumentasi lengkap **Deploy Aplikasi Explorer ke VPS dengan Docker + Nginx + HTTPS**:
-
----
-
 # 🚀 Deploy Aplikasi Explorer ke VPS dengan Docker, Nginx Reverse Proxy, dan HTTPS
 
 **Domain**: [`https://explorer.camat.my.id`](https://explorer.camat.my.id)
@@ -176,5 +172,3 @@ sudo certbot renew --dry-run
 * ✅ Reverse proxy lancar dengan **Nginx**
 
 ---
-
-Jika kamu ingin membuat dokumentasi versi publik (misalnya untuk GitHub README), tinggal paste markdown ini langsung! Jika ingin menambahkan ilustrasi/diagram deployment, saya juga bisa bantu buatkan.
