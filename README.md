@@ -1,56 +1,143 @@
-<div align="center">
+🚀 Deploy Aplikasi Explorer ke VPS dengan Docker, Nginx Reverse Proxy, dan HTTPS
+Domain: https://explorer.camat.my.id
+Platform: Vue.js + Docker + Nginx + Let's Encrypt
 
-![Ping Wallet](./public/logo.svg)
+✅ 1. Build dan Jalankan Aplikasi Explorer dengan Docker
+A. Build Docker Image
+bash
+Salin
+Edit
+docker build -t explorer .
+B. Jalankan Docker Container di Port 8099
+bash
+Salin
+Edit
+docker run -d -p 8099:80 --name explorer-container explorer
+✅ 2. Pasang dan Konfigurasi Nginx
+A. Install Nginx
+bash
+Salin
+Edit
+sudo apt update
+sudo apt install nginx -y
+B. Buat Config File untuk Domain
+bash
+Salin
+Edit
+sudo nano /etc/nginx/sites-available/explorer.camat.my.id
+Isi file:
 
-<h1>Ping Dashboard</h1>
+nginx
+Salin
+Edit
+# 1. Redirect HTTP ke HTTPS + Challenge untuk Certbot
+server {
+    if ($host = explorer.camat.my.id) {
+        return 301 https://$host$request_uri;
+    }
 
-**Ping Dashboard is not only an explorer but also a wallet and more ... 🛠**
+    listen 80;
+    server_name explorer.camat.my.id;
 
-[![version](https://img.shields.io/github/tag/ping-pub/explorer.svg)](https://github.com/ping-pub/explorer/releases/latest)
-[![GitHub](https://img.shields.io/github/license/ping-pub/explorer.svg)](https://github.com/ping-pub/explorer/blob/master/LICENSE)
-[![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/bukotsunikki.svg?style=social&label=Follow%20%40ping_pub)](https://twitter.com/ping_pub)
-[![https://discord.gg/CmjYVSr6GW](https://img.shields.io/badge/discord-join-7289DA.svg?logo=discord&longCache=true&style=flat)](https://discord.gg/CmjYVSr6GW)
+    location /.well-known/acme-challenge/ {
+        root /var/www/html;
+        allow all;
+    }
 
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
 
-</div>
+# 2. HTTPS Reverse Proxy ke Aplikasi Vue di Docker
+server {
+    listen 443 ssl http2;
+    server_name explorer.camat.my.id;
 
-`Ping Dashboard` is a light explorer for Cosmos-based Blockchains.  https://ping.pub .
+    ssl_certificate /etc/letsencrypt/live/explorer.camat.my.id/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/explorer.camat.my.id/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
 
-## What sets Ping Dashboard apart from other explorers?
-**Ping Dashboard** stands out by providing a real-time exploration of blockchain data without relying on caching or pre-processing. It exclusively fetches data from the Cosmos full node via LCD/RPC endpoints, ensuring a truly authentic experience. This approach is referred to as the "Light Explorer."
+    location / {
+        proxy_pass http://localhost:8099;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
 
-## Are you interested in listing your blockchain on https://ping.pub?
+        try_files $uri $uri/ /index.html;
+    }
+}
 
-To make this repository clean, please submit your request to https://github.com/ping-pub/ping.pub.git
+# 3. Redirect www ke non-www
+server {
+    listen 80;
+    server_name www.explorer.camat.my.id;
+    return 301 https://explorer.camat.my.id$request_uri;
+}
+C. Aktifkan Konfigurasi
+bash
+Salin
+Edit
+sudo ln -s /etc/nginx/sites-available/explorer.camat.my.id /etc/nginx/sites-enabled/
+D. Cek dan Reload Nginx
+bash
+Salin
+Edit
+sudo nginx -t
+sudo systemctl reload nginx
+✅ 3. Pasang HTTPS dengan Certbot + Let's Encrypt
+A. Install Certbot & Plugin Nginx
+bash
+Salin
+Edit
+sudo apt install certbot python3-certbot-nginx -y
+B. Jalankan Certbot
+bash
+Salin
+Edit
+sudo certbot --nginx -d explorer.camat.my.id
+Ikuti petunjuk: isi email, setuju TOS, dan pilih redirect to HTTPS jika ditanya.
 
+✅ 4. Verifikasi HTTPS Berfungsi
+Akses Aplikasi:
+arduino
+Salin
+Edit
+https://explorer.camat.my.id/
+Tes Langsung Vue Router (SPA):
+arduino
+Salin
+Edit
+https://explorer.camat.my.id/empeiria/staking
+Jika route ini bisa diakses langsung (tanpa 404), berarti konfigurasi try_files sukses untuk history mode Vue.
 
-## Why does Ping Dashboard rely on official/trusted third-party public LCD/RPC servers?
-There are two primary reasons for this choice:
+🧹 5. Tambahan & Maintenance
+Cek Status Nginx
+bash
+Salin
+Edit
+sudo systemctl status nginx
+Lihat Log Nginx (Debugging)
+bash
+Salin
+Edit
+sudo tail -f /var/log/nginx/access.log
+sudo tail -f /var/log/nginx/error.log
+Tes Renewal Certbot Secara Manual
+bash
+Salin
+Edit
+sudo certbot renew --dry-run
+Certbot biasanya otomatis memperpanjang sertifikat via cron.
 
- - Trust: In a decentralized system, it is crucial to avoid relying solely on a single entity. By utilizing official/trusted third-party public LCD/RPC servers, Ping Dashboard ensures that the data is sourced from a network of trusted participants.
- - Limited Resources: As Ping Dashboard plans to list hundreds of Cosmos-based blockchains in the future, it is impractical for the Ping team to operate validators or full nodes for all of them. Leveraging trusted third-party servers allows for more efficient resource allocation.
+✅ Summary
+✅ Aplikasi Explorer online di VPS dengan Docker
 
-## Donation
+✅ Domain explorer.camat.my.id aktif dan aman (HTTPS)
 
-Your donation will help us make better products. Thanks in advance.
+✅ Mendukung SPA routing langsung (Vue Router history mode)
 
- - Address for ERC20: USDC, USDT, ETH
-```
-0x88BFec573Dd3E4b7d2E6BfD4D0D6B11F843F8aa1
-```
-
-#### Donations from project
-
-- Point Network: 1000USDC and $1000 worth of POINT
-- Bitsong: 50k BTSG
-- IRISnet: 100k IRIS
-
-## Hire us
-
-You can hire us by submitting an issue and fund the issue on [IssueHunter](https://issuehunt.io/r/ping-pub/explorer)
-
-
-## Contributors
-
-Developers: @liangping @dingyiming
-
+✅ Reverse proxy lancar dengan Nginx
