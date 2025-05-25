@@ -1,35 +1,48 @@
-🚀 Deploy Aplikasi Explorer ke VPS dengan Docker, Nginx Reverse Proxy, dan HTTPS
-Domain: https://explorer.camat.my.id
-Platform: Vue.js + Docker + Nginx + Let's Encrypt
+Berikut adalah versi **Markdown** dari dokumentasi lengkap **Deploy Aplikasi Explorer ke VPS dengan Docker + Nginx + HTTPS**:
 
-✅ 1. Build dan Jalankan Aplikasi Explorer dengan Docker
-A. Build Docker Image
-bash
-Salin
-Edit
+---
+
+# 🚀 Deploy Aplikasi Explorer ke VPS dengan Docker, Nginx Reverse Proxy, dan HTTPS
+
+**Domain**: [`https://explorer.camat.my.id`](https://explorer.camat.my.id)
+**Platform**: Vue.js + Docker + Nginx + Let's Encrypt
+
+---
+
+## ✅ 1. Build dan Jalankan Aplikasi Explorer dengan Docker
+
+### A. Build Docker Image
+
+```bash
 docker build -t explorer .
-B. Jalankan Docker Container di Port 8099
-bash
-Salin
-Edit
+```
+
+### B. Jalankan Docker Container di Port 8099
+
+```bash
 docker run -d -p 8099:80 --name explorer-container explorer
-✅ 2. Pasang dan Konfigurasi Nginx
-A. Install Nginx
-bash
-Salin
-Edit
+```
+
+---
+
+## ✅ 2. Pasang dan Konfigurasi Nginx
+
+### A. Install Nginx
+
+```bash
 sudo apt update
 sudo apt install nginx -y
-B. Buat Config File untuk Domain
-bash
-Salin
-Edit
-sudo nano /etc/nginx/sites-available/explorer.camat.my.id
-Isi file:
+```
 
-nginx
-Salin
-Edit
+### B. Buat Config File untuk Domain
+
+```bash
+sudo nano /etc/nginx/sites-available/explorer.camat.my.id
+```
+
+**Isi file:**
+
+```nginx
 # 1. Redirect HTTP ke HTTPS + Challenge untuk Certbot
 server {
     if ($host = explorer.camat.my.id) {
@@ -77,67 +90,91 @@ server {
     server_name www.explorer.camat.my.id;
     return 301 https://explorer.camat.my.id$request_uri;
 }
-C. Aktifkan Konfigurasi
-bash
-Salin
-Edit
+```
+
+### C. Aktifkan Konfigurasi
+
+```bash
 sudo ln -s /etc/nginx/sites-available/explorer.camat.my.id /etc/nginx/sites-enabled/
-D. Cek dan Reload Nginx
-bash
-Salin
-Edit
+```
+
+### D. Cek dan Reload Nginx
+
+```bash
 sudo nginx -t
 sudo systemctl reload nginx
-✅ 3. Pasang HTTPS dengan Certbot + Let's Encrypt
-A. Install Certbot & Plugin Nginx
-bash
-Salin
-Edit
+```
+
+---
+
+## ✅ 3. Pasang HTTPS dengan Certbot + Let's Encrypt
+
+### A. Install Certbot & Plugin Nginx
+
+```bash
 sudo apt install certbot python3-certbot-nginx -y
-B. Jalankan Certbot
-bash
-Salin
-Edit
+```
+
+### B. Jalankan Certbot
+
+```bash
 sudo certbot --nginx -d explorer.camat.my.id
-Ikuti petunjuk: isi email, setuju TOS, dan pilih redirect to HTTPS jika ditanya.
+```
 
-✅ 4. Verifikasi HTTPS Berfungsi
-Akses Aplikasi:
-arduino
-Salin
-Edit
+> Ikuti petunjuk: isi email, setuju TOS, dan pilih redirect to HTTPS jika ditanya.
+
+---
+
+## ✅ 4. Verifikasi HTTPS Berfungsi
+
+### Akses Aplikasi:
+
+```
 https://explorer.camat.my.id/
-Tes Langsung Vue Router (SPA):
-arduino
-Salin
-Edit
-https://explorer.camat.my.id/empeiria/staking
-Jika route ini bisa diakses langsung (tanpa 404), berarti konfigurasi try_files sukses untuk history mode Vue.
+```
 
-🧹 5. Tambahan & Maintenance
-Cek Status Nginx
-bash
-Salin
-Edit
+### Tes Langsung Vue Router (SPA):
+
+```
+https://explorer.camat.my.id/empeiria/staking
+```
+
+> Jika route ini bisa diakses langsung (tanpa 404), berarti konfigurasi `try_files` sukses untuk history mode Vue.
+
+---
+
+## 🧹 5. Tambahan & Maintenance
+
+### Cek Status Nginx
+
+```bash
 sudo systemctl status nginx
-Lihat Log Nginx (Debugging)
-bash
-Salin
-Edit
+```
+
+### Lihat Log Nginx (Debugging)
+
+```bash
 sudo tail -f /var/log/nginx/access.log
 sudo tail -f /var/log/nginx/error.log
-Tes Renewal Certbot Secara Manual
-bash
-Salin
-Edit
+```
+
+### Tes Renewal Certbot Secara Manual
+
+```bash
 sudo certbot renew --dry-run
-Certbot biasanya otomatis memperpanjang sertifikat via cron.
+```
 
-✅ Summary
-✅ Aplikasi Explorer online di VPS dengan Docker
+> Certbot biasanya otomatis memperpanjang sertifikat via cron.
 
-✅ Domain explorer.camat.my.id aktif dan aman (HTTPS)
+---
 
-✅ Mendukung SPA routing langsung (Vue Router history mode)
+## ✅ Summary
 
-✅ Reverse proxy lancar dengan Nginx
+* ✅ Aplikasi Explorer **online di VPS** dengan Docker
+* ✅ Domain `explorer.camat.my.id` aktif dan aman (HTTPS)
+* ✅ Mendukung **SPA routing langsung** (Vue Router history mode)
+* ✅ Reverse proxy lancar dengan **Nginx**
+
+---
+
+Jika kamu ingin membuat dokumentasi versi publik (misalnya untuk GitHub README), tinggal paste markdown ini langsung! Jika ingin menambahkan ilustrasi/diagram deployment, saya juga bisa bantu buatkan.
