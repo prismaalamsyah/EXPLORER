@@ -75,8 +75,6 @@ server {
         proxy_set_header Connection 'upgrade';
         proxy_set_header Host $host;
         proxy_cache_bypass $http_upgrade;
-
-        try_files $uri $uri/ /index.html;
     }
 }
 
