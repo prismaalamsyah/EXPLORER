@@ -1,0 +1,30 @@
+{
+  "chain_name": "empeiria",
+  "api": [
+    {
+      "address": "https://empeiria-testnet-api.itrocket.net",
+      "provider": "ITRocket"
+    }
+  ],
+  "rpc": [
+    {
+      "address": "https://empeiria-testnet-rpc.itrocket.net",
+      "provider": "ITRocket"
+    }
+  ],
+  "sdk_version": "0.47.5",
+  "coin_type": "118",
+  "min_tx_fee": "500",
+  "assets": [
+    {
+      "base": "uempe",
+      "symbol": "EMPE",
+      "exponent": "6",
+      "coingecko_id": "empeiria",
+      "logo": "https://raw.githubusercontent.com/prismaalamsyah/images/main/empeiria.jpg"
+    }
+  ],
+  "addr_prefix": "empe",
+  "theme_color": "#2E7CFF",
+  "logo": "https://raw.githubusercontent.com/prismaalamsyah/images/main/empeiria.jpg"
+}

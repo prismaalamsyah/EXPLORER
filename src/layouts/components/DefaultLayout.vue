@@ -81,9 +81,9 @@ dayjs()
     >
       <div class="flex justify-between mt-1 pl-4 py-4 mb-1">
         <RouterLink to="/" class="flex items-center">
-          <img class="w-10 h-10" src="../../assets/logo.svg" />
-          <h1 class="flex-1 ml-3 text-2xl font-semibold dark:text-white">
-            Ping.pub
+          <img class="w-10 h-10" src="../../assets/camat.svg" />
+          <h1 class="flex-1 ml-1 text-2xl font-semibold dark:text-white">
+            Camat
           </h1>
         </RouterLink>
         <div
